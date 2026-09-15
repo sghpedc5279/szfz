@@ -1,0 +1,784 @@
+/* ============================================================
+   数智方志 · 新中式数字美学品牌体系
+   Brand System for Digital Humanities Platform
+   ============================================================ */
+
+/* ---- CSS 自定义属性（设计令牌） ---- */
+:root {
+  /* 主色系 - 深蓝 */
+  --brand-deep:    #0A2C4A;
+  --brand-primary: #163E5F;
+  --brand-mid:     #165D94;
+  --brand-light:   #1A7FBF;
+  --brand-sky:     #E8F4FD;
+
+  /* 暖色辅助 */
+  --warm-paper:    #F5F0E8;  /* 宣纸米白 */
+  --warm-ivory:    #FBF7F0;  /* 浅宣纸 */
+  --warm-dark:     #E8DDD0;  /* 深宣纸 */
+
+  /* 点缀色 */
+  --accent-red:    #C44233;  /* 朱砂红 */
+  --accent-gold:   #B8860B;  /* 古铜金 */
+  --accent-jade:   #5B8C5A;  /* 青玉色 */
+
+  /* 中性色 */
+  --text-primary:   #1A1A1A;
+  --text-secondary: #555555;
+  --text-muted:     #888888;
+  --border-light:   #E8E4DF;
+  --border-warm:    #D5CFC6;
+  --bg-page:        #FAFAF8;
+  --bg-card:        #FFFFFF;
+
+  /* 阴影 */
+  --shadow-sm:    0 1px 3px rgba(10,44,74,0.06);
+  --shadow-md:    0 4px 12px rgba(10,44,74,0.08);
+  --shadow-lg:    0 8px 30px rgba(10,44,74,0.12);
+  --shadow-glow:  0 0 20px rgba(22,93,148,0.12);
+
+  /* 圆角 */
+  --radius-sm:    6px;
+  --radius-md:    10px;
+  --radius-lg:    16px;
+  --radius-xl:    24px;
+
+  /* 字体 */
+  --font-serif:   'Noto Serif SC', 'Source Han Serif SC', 'STSong', 'SimSun', 'KaiTi', '楷体', serif;
+  --font-sans:    'PingFang SC', 'Microsoft YaHei', 'Hiragino Sans GB', system-ui, -apple-system, sans-serif;
+  --font-display: 'Noto Serif SC', 'Source Han Serif SC', 'STZhongsong', '华文中宋', 'SimSun', serif;
+
+  /* 过渡 */
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.3s ease;
+  --transition-slow: 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* ---- 全局基础 ---- */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  background: var(--bg-page);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---- 标题字体 ---- */
+h1, h2, h3, .brand-heading, .section-title, .hero-title {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+h1 { font-size: 2.5rem; line-height: 1.3; }
+h2 { font-size: 2rem; line-height: 1.35; }
+h3 { font-size: 1.5rem; line-height: 1.4; }
+
+.section-title {
+  font-size: 2rem;
+  color: var(--brand-primary);
+  position: relative;
+  display: inline-block;
+  margin-bottom: 2rem;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-gold), var(--accent-red));
+  border-radius: 2px;
+}
+
+/* ---- 品牌导航栏 ---- */
+.brand-navbar {
+  background: rgba(10, 44, 74, 0.88);
+  backdrop-filter: blur(16px) saturate(120%);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  transition: all var(--transition-base);
+  padding: 12px 0;
+}
+
+.brand-navbar.scrolled {
+  background: rgba(10, 44, 74, 0.95);
+  box-shadow: var(--shadow-md);
+  padding: 8px 0;
+}
+
+.brand-navbar .navbar-brand {
+  font-family: var(--font-serif);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #fff !important;
+  letter-spacing: 0.04em;
+}
+
+.brand-navbar .navbar-brand img {
+  height: 32px;
+  margin-right: 8px;
+}
+
+.brand-navbar .nav-link {
+  color: rgba(255,255,255,0.78) !important;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  padding: 6px 16px !important;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+.brand-navbar .nav-link:hover,
+.brand-navbar .nav-link.active {
+  color: #fff !important;
+  background: rgba(255,255,255,0.1);
+}
+
+.brand-navbar .nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 2px;
+  background: var(--accent-gold);
+  border-radius: 1px;
+}
+
+/* ---- 卡片系统 ---- */
+
+/* 一级卡片 - 核心功能入口 */
+.card-primary {
+  background: var(--bg-card);
+  border: none;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 32px 28px;
+  transition: all var(--transition-slow);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.card-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--brand-primary), var(--accent-gold));
+  transform: scaleX(0);
+  transition: transform var(--transition-base);
+}
+
+.card-primary:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg), var(--shadow-glow);
+}
+
+.card-primary:hover::before {
+  transform: scaleX(1);
+}
+
+.card-primary .card-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--brand-primary), var(--brand-mid));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #fff;
+  margin-bottom: 16px;
+  transition: transform var(--transition-base);
+}
+
+.card-primary:hover .card-icon {
+  transform: scale(1.08);
+}
+
+.card-primary .card-title {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--brand-deep);
+  margin-bottom: 8px;
+}
+
+.card-primary .card-text {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* 二级卡片 - 内容列表 */
+.card-content {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+  transition: all var(--transition-base);
+  position: relative;
+}
+
+.card-content:hover {
+  border-color: var(--border-warm);
+  box-shadow: var(--shadow-md);
+  background: var(--warm-ivory);
+}
+
+.card-content .content-label {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--brand-primary);
+}
+
+.card-content .content-meta {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* 三级卡片 - 辅助信息 */
+.card-minor {
+  background: transparent;
+  border: 1px dashed var(--border-light);
+  border-radius: var(--radius-sm);
+  padding: 14px 18px;
+  transition: all var(--transition-fast);
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.card-minor:hover {
+  border-color: var(--accent-gold);
+  background: rgba(184,134,11,0.04);
+}
+
+/* 文献卡片 - 古籍样式 */
+.card-ancient {
+  background: linear-gradient(135deg, var(--warm-ivory), var(--warm-paper));
+  border: 1px solid var(--border-warm);
+  border-radius: var(--radius-sm);
+  padding: 24px;
+  position: relative;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-sm);
+}
+
+.card-ancient::before {
+  content: '《';
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  color: var(--accent-red);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.card-ancient::after {
+  content: '》';
+  position: absolute;
+  bottom: 12px;
+  right: 14px;
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  color: var(--accent-red);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.card-ancient:hover {
+  border-color: var(--accent-gold);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.card-ancient .ancient-title {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--brand-deep);
+  padding: 0 28px;
+  text-align: center;
+}
+
+.card-ancient .ancient-era {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 8px;
+  letter-spacing: 0.1em;
+}
+
+/* ---- 按钮系统 ---- */
+.btn-brand {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  padding: 10px 28px;
+  border-radius: var(--radius-md);
+  border: none;
+  transition: all var(--transition-base);
+  letter-spacing: 0.02em;
+}
+
+.btn-brand-primary {
+  background: linear-gradient(135deg, var(--brand-primary), var(--brand-mid));
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(22,61,95,0.3);
+}
+
+.btn-brand-primary:hover {
+  background: linear-gradient(135deg, var(--brand-deep), var(--brand-primary));
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(22,61,95,0.4);
+}
+
+.btn-brand-outline {
+  background: transparent;
+  color: var(--brand-primary);
+  border: 2px solid var(--brand-primary);
+}
+
+.btn-brand-outline:hover {
+  background: var(--brand-primary);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.btn-brand-gold {
+  background: linear-gradient(135deg, var(--accent-gold), #D4A017);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(184,134,11,0.3);
+}
+
+.btn-brand-gold:hover {
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(184,134,11,0.4);
+}
+
+/* ---- 古籍纹样装饰 ---- */
+.ornament-hr {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-warm), var(--accent-gold), var(--border-warm), transparent);
+  border: none;
+  margin: 2rem 0;
+}
+
+.ornament-corner {
+  position: relative;
+}
+
+.ornament-corner::before {
+  content: '';
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 24px;
+  height: 24px;
+  border-top: 2px solid var(--accent-gold);
+  border-left: 2px solid var(--accent-gold);
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.ornament-corner::after {
+  content: '';
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  width: 24px;
+  height: 24px;
+  border-bottom: 2px solid var(--accent-gold);
+  border-right: 2px solid var(--accent-gold);
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* ---- 跑马灯公告 ---- */
+.notice-marquee {
+  background: linear-gradient(135deg, var(--warm-ivory), var(--warm-paper));
+  border-bottom: 1px solid var(--border-warm);
+  padding: 8px 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  position: relative;
+  overflow: hidden;
+}
+
+.notice-marquee .marquee-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--accent-red);
+  color: #fff;
+  padding: 2px 12px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.notice-marquee .marquee-content {
+  display: inline-block;
+  white-space: nowrap;
+  animation: marquee-scroll 25s linear infinite;
+}
+
+.notice-marquee .marquee-close {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1.2rem;
+  border: none;
+  background: none;
+  z-index: 2;
+}
+
+.notice-marquee .marquee-close:hover {
+  color: var(--accent-red);
+}
+
+@keyframes marquee-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ---- Banner 区域 ---- */
+.hero-banner {
+  position: relative;
+  min-height: 80vh;
+  background: linear-gradient(160deg, #0A2C4A 0%, #163E5F 30%, #165D94 100%);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+/* 纹理叠加层 */
+.hero-banner .banner-texture {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 80%, rgba(184,134,11,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(196,66,51,0.06) 0%, transparent 50%),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 3px,
+      rgba(255,255,255,0.015) 3px,
+      rgba(255,255,255,0.015) 4px
+    );
+  pointer-events: none;
+}
+
+/* 粒子飘动 */
+.hero-banner .particles-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.hero-banner .particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: rgba(255,255,255,0.5);
+  border-radius: 50%;
+  animation: float-up var(--dur) linear infinite;
+  opacity: 0;
+}
+
+@keyframes float-up {
+  0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+  10%  { opacity: 0.7; }
+  90%  { opacity: 0.1; }
+  100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+}
+
+/* Banner 内容 */
+.hero-banner .hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.hero-banner .hero-main-title {
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.3;
+  margin-bottom: 20px;
+  letter-spacing: 0.05em;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+}
+
+.hero-banner .hero-sub-title {
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  color: rgba(255,255,255,0.78);
+  line-height: 1.7;
+  margin-bottom: 36px;
+  font-weight: 400;
+}
+
+.hero-banner .hero-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.hero-banner .hero-scroll-hint {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255,255,255,0.4);
+  font-size: 0.85rem;
+  animation: bounce-down 2s ease infinite;
+}
+
+@keyframes bounce-down {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(8px); }
+}
+
+/* ---- 知识图谱（暗色区块） ---- */
+.kg-section {
+  background: linear-gradient(180deg, #0F1923, #162230);
+  padding: 80px 0;
+  position: relative;
+}
+
+.kg-section .kg-title {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  color: #fff;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.kg-section .kg-subtitle {
+  color: rgba(255,255,255,0.6);
+  text-align: center;
+  margin-bottom: 3rem;
+  font-size: 1rem;
+}
+
+.kg-container {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius-lg);
+  padding: 28px 20px;
+  transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
+}
+
+.kg-container:hover {
+  border-color: rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.06);
+  box-shadow: 0 0 30px rgba(22,93,148,0.08);
+}
+
+.kg-container .kg-label {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.85);
+  text-align: center;
+  margin-bottom: 16px;
+  letter-spacing: 0.04em;
+}
+
+/* 图谱节点色彩体系（精简至4色） */
+.kg-node-primary   { fill: #4A90D9; }  /* 主色-核心人物/事件 */
+.kg-node-secondary { fill: #7EB8E0; }  /* 辅色-次要实体 */
+.kg-node-tertiary  { fill: #C5A55A; }  /* 古籍/文献 */
+.kg-node-neutral   { fill: #8899A6; }  /* 地理/位置 */
+
+/* 连线 */
+.kg-edge-primary   { stroke: rgba(74,144,217,0.5); }
+.kg-edge-secondary { stroke: rgba(126,184,224,0.35); }
+.kg-edge-tertiary  { stroke: rgba(197,165,90,0.35); }
+
+/* 图谱节点 hover */
+.kg-node {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.kg-node:hover {
+  filter: brightness(1.3);
+  transform: scale(1.3);
+  transform-origin: center;
+}
+
+.kg-node:hover + .kg-node-label,
+.kg-node-label:hover {
+  opacity: 1 !important;
+}
+
+.kg-node-label {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  fill: rgba(255,255,255,0.7);
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+/* ---- Footer ---- */
+.brand-footer {
+  background: var(--brand-deep);
+  color: rgba(255,255,255,0.6);
+  padding: 40px 0 24px;
+  font-size: 0.9rem;
+}
+
+.brand-footer a {
+  color: rgba(255,255,255,0.75);
+  text-decoration: none;
+}
+
+.brand-footer a:hover {
+  color: var(--accent-gold);
+}
+
+/* ---- 响应式 ---- */
+@media (max-width: 768px) {
+  .hero-banner .hero-main-title {
+    font-size: 2rem;
+  }
+  .hero-banner .hero-sub-title {
+    font-size: 1rem;
+  }
+  .section-title {
+    font-size: 1.5rem;
+  }
+  .card-primary {
+    padding: 24px 20px;
+  }
+  .kg-section {
+    padding: 50px 0;
+  }
+}
+
+/* ---- 空状态 ---- */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.empty-state .empty-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  opacity: 0.3;
+}
+
+.empty-state .empty-text {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  color: var(--text-muted);
+}
+
+.empty-state .empty-hint {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-top: 8px;
+}
+
+/* ---- 统计卡片 ---- */
+.stat-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-base);
+}
+
+.stat-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 80px;
+  height: 80px;
+  border-radius: 0 0 0 80px;
+  opacity: 0.12;
+  pointer-events: none;
+}
+
+.stat-card.stat-level-1::after { background: var(--brand-primary); }
+.stat-card.stat-level-2::after { background: var(--brand-mid); }
+.stat-card.stat-level-3::after { background: var(--brand-light); }
+.stat-card.stat-level-4::after { background: var(--accent-gold); }
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.stat-card .stat-value {
+  font-family: var(--font-serif);
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--brand-deep);
+}
+
+.stat-card .stat-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-top: 6px;
+}
+
+/* ---- 视频播放器风格化 ---- */
+.video-card {
+  background: linear-gradient(180deg, #1A1A1A, #0D0D0D);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.video-card .video-title-bar {
+  padding: 12px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.video-card .video-title-bar .film-icon {
+  color: var(--accent-gold);
+  font-size: 1rem;
+}
+
+.video-card .video-title-bar span {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  color: rgba(255,255,255,0.85);
+}

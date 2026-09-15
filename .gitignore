@@ -1,0 +1,25 @@
+# ===== 后端（GitHub Pages 为纯静态托管，不支持 Node 服务） =====
+server.js
+package.json
+package-lock.json
+node_modules/
+
+# 后台管理页（依赖服务端登录鉴权，静态环境无法使用）
+admin.html
+
+# 本地工具 / 缓存目录（忽略所有点目录，仅保留 .github 与 .gitignore）
+.*
+!.gitignore
+!.github
+
+# 系统 / 临时文件
+.DS_Store
+Thumbs.db
+*.log
+
+# ===== 大体积 / 当前页面未引用的媒体（不适合 GitHub Pages）=====
+# 史稿地图集图片：无任何页面引用，且体积大（约 90MB），不纳入本次部署
+中国史稿地图集 上册/
+中国史稿地图集 下册/
+# 视频约 368MB，超过 GitHub 单文件 100MB 上限，无法通过 GitHub Pages 托管
+苏州影像志 第五集 姑苏繁华.mp4

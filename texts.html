@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文本数据集 - 数智方志</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="brand.css" rel="stylesheet">
+    <style>
+        html { scroll-behavior: smooth; }
+        .section { padding: 80px 0; }
+        .page-title { font-family: var(--font-serif); font-size: 2rem; font-weight: 700; margin-bottom: 40px; color: var(--brand-primary); text-align: center; position: relative; }
+        .page-title::after { content:''; position:absolute; bottom:-8px; left:50%; transform:translateX(-50%); width:60px; height:3px; background:linear-gradient(90deg,var(--accent-gold),var(--accent-red)); border-radius:2px; }
+        .text-content {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 30px;
+            font-size: 14px; line-height: 1.9;
+            max-height: 600px; overflow-y: auto;
+            white-space: pre-wrap; word-wrap: break-word;
+            font-family: "STSong","SimSun","KaiTi","楷体","宋体",serif;
+            border: 1px solid var(--border-light);
+        }
+        .text-content::-webkit-scrollbar { width: 8px; }
+        .text-content::-webkit-scrollbar-track { background: var(--border-light); border-radius: 4px; }
+        .text-content::-webkit-scrollbar-thumb { background: #bbb; border-radius: 4px; }
+        .text-content::-webkit-scrollbar-thumb:hover { background: #999; }
+        .file-info {
+            background: var(--warm-ivory);
+            padding: 16px 24px;
+            border-radius: var(--radius-md);
+            margin-bottom: 24px;
+            display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid var(--border-warm);
+        }
+        .file-info h5 { font-family: var(--font-serif); color: var(--brand-primary); }
+        .loading { text-align: center; padding: 60px; color: var(--text-muted); }
+        .loading-spinner {
+            width: 40px; height: 40px;
+            border: 4px solid var(--border-light);
+            border-top: 4px solid var(--brand-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .error-box {
+            background: #fff5f5; border: 1px solid #fecaca;
+            border-radius: var(--radius-md); padding: 24px;
+            text-align: center; color: #c00;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 导航栏 -->
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top brand-navbar">
+    <div class="container">
+        <a class="navbar-brand" href="index.html">📜 数智方志</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="index.html">返回首页</a></li>
+                <li class="nav-item"><a class="nav-link active" href="texts.html">文本数据集</a></li>
+                <li class="nav-item"><a class="nav-link" href="maps.html">历史地图</a></li>
+                <li class="nav-item"><a class="nav-link" href="media.html">多媒体资源</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<section class="section" style="padding-top: 100px;">
+    <div class="container">
+        <h2 class="page-title">文本数据集</h2>
+
+        <div class="file-info">
+            <div>
+                <h5 class="mb-1">📄 文本数据集.txt</h5>
+                <small class="text-muted">结构化方志文本语料库</small>
+            </div>
+            <a href="./文本数据集.txt" download class="btn btn-brand-gold btn-sm">⬇️ 下载原文</a>
+        </div>
+
+        <div class="card-content">
+            <h6 class="content-label mb-3">📖 文本预览</h6>
+            <div id="contentArea">
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>正在加载文本内容...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-content mt-4">
+            <h6 style="font-family:var(--font-serif);color:var(--brand-primary);">📋 数据集说明</h6>
+            <ul class="mb-0 mt-2" style="font-size:0.9rem;color:var(--text-secondary);">
+                <li>本数据集收录了结构化方志文本语料，供数字人文研究使用</li>
+                <li>支持在线预览和本地下载</li>
+                <li>如需完整数据集，请联系平台管理员</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<footer class="brand-footer">
+    <div class="container text-center">
+        <h5 style="font-family:var(--font-serif);color:rgba(255,255,255,0.9);">📜 数智方志 · 数字人文研究平台</h5>
+        <p class="mt-3">© 2026 版权所有 | 机构学术专用</p>
+    </div>
+</footer>
+
+<script>
+async function loadTextContent() {
+    const contentArea = document.getElementById('contentArea');
+    try {
+        const res = await fetch('./文本数据集.txt');
+        if (!res.ok) throw new Error('无法加载文本文件');
+        const text = await res.text();
+        const maxPreview = 50000;
+        const displayText = text.length > maxPreview
+            ? text.substring(0, maxPreview) + '\n\n... [内容过长，已截断预览，下载完整文件查看全部内容] ...'
+            : text;
+        contentArea.innerHTML = `<div class="text-content">${escapeHtml(displayText)}</div>`;
+    } catch (e) {
+        console.error('加载失败:', e);
+        contentArea.innerHTML = `<div class="error-box"><p>⚠️ 加载文本失败</p><small>${e.message}</small></div>`;
+    }
+}
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+loadTextContent();
+</script>
+</body>
+</html>

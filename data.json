@@ -1,0 +1,144 @@
+{
+  "literature": [
+    {
+      "id": 1,
+      "name": "《浙江通志》",
+      "type": "省级",
+      "era": "民国",
+      "volume": "全258卷",
+      "status": "已上线"
+    },
+    {
+      "id": 2,
+      "name": "《绍兴府志》",
+      "type": "市级",
+      "era": "清代",
+      "volume": "乾隆年间",
+      "status": "已上线"
+    },
+    {
+      "id": 3,
+      "name": "《新昌县志》",
+      "type": "县级",
+      "era": "清代",
+      "volume": "光绪年间",
+      "status": "已上线"
+    },
+    {
+      "id": 4,
+      "name": "《钱塘县志》",
+      "type": "县级",
+      "era": "清代",
+      "volume": "康熙年间",
+      "status": "已上线"
+    },
+    {
+      "id": 5,
+      "name": "《湖州府志》",
+      "type": "市级",
+      "era": "清代",
+      "volume": "同治年间",
+      "status": "已上线"
+    },
+    {
+      "id": 6,
+      "name": "《严州府志》",
+      "type": "市级",
+      "era": "清代",
+      "volume": "光绪年间",
+      "status": "审核中"
+    },
+    {
+      "id": 7,
+      "name": "�����ݸ�־��",
+      "type": "�м�",
+      "era": "���",
+      "volume": "Ǭ¡���",
+      "status": "�����"
+    }
+  ],
+  "notice": [
+    {
+      "id": 1,
+      "title": "《数智方志》平台正式上线试运行通知",
+      "date": "2026-02-28",
+      "type": "置顶",
+      "content": "数智方志数字人文研究平台正式上线试运行，欢迎各位学者使用。"
+    },
+    {
+      "id": 2,
+      "title": "方志库新增清代府志、县志共12种",
+      "date": "2026-02-25",
+      "type": "公告",
+      "content": "本次新增收录清代绍兴府志、湖州府志等12种方志文献。"
+    },
+    {
+      "id": 3,
+      "title": "知识图谱可视化模块正式开放",
+      "date": "2026-02-20",
+      "type": "公告",
+      "content": "知识图谱模块现已开放，支持人物、地理、事件三类图谱浏览。"
+    },
+    {
+      "id": 4,
+      "title": "方智编研栏目开放使用",
+      "date": "2026-02-15",
+      "type": "公告",
+      "content": "方智编研栏目正式开放，支持在线提交编研成果。"
+    },
+    {
+      "id": 5,
+      "title": "平台数据维护与功能升级通知",
+      "date": "2026-02-10",
+      "type": "公告",
+      "content": "平台将于近期进行数据维护和功能升级，届时可能短暂影响使用。"
+    }
+  ],
+  "user": [
+    {
+      "id": 1,
+      "username": "admin",
+      "password": "$2b$10$ck4uO.MVm02IEAYhII9g5.knHRfawbAjDVfjG0t7IcDlMtYshWC9e",
+      "role": "管理员",
+      "email": "admin@szzfz.cn"
+    },
+    {
+      "id": 2,
+      "username": "researcher1",
+      "password": "$2b$10$ZKBRWogsEqDNYchiAIEDdepPJIFWoaqYaiATN6Ep.48.x6qM63A86",
+      "role": "研究员",
+      "email": "r1@szzfz.cn"
+    },
+    {
+      "id": 3,
+      "username": "editor1",
+      "password": "$2b$10$MCWO46QCSZoyJrQ9kOCXd.hPOv/OE9.m4bPRpx6P9e5Cc4fpaRyea",
+      "role": "编辑",
+      "email": "e1@szzfz.cn"
+    }
+  ],
+  "team": [
+    {
+      "id": 1,
+      "name": "丁家友",
+      "role": "项目负责人",
+      "bio": "数字人文、历史文献研究",
+      "avatar": "https://picsum.photos/id/1/120/120",
+      "link": "https://web.suda.edu.cn/dingjiayou/"
+    },
+    {
+      "id": 2,
+      "name": "李博士",
+      "role": "核心研究员",
+      "bio": "方志文献整理与数字化",
+      "avatar": "https://picsum.photos/id/2/120/120"
+    },
+    {
+      "id": 3,
+      "name": "王工程师",
+      "role": "数据工程师",
+      "bio": "知识图谱、数据可视化",
+      "avatar": "https://picsum.photos/id/3/120/120"
+    }
+  ]
+}

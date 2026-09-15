@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>历史地图 - 数智方志</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="brand.css" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0e14;
+      color: white;
+      font-family: var(--font-sans);
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+    }
+    /* 顶部导航（毛玻璃） */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 100;
+      flex-shrink: 0;
+      gap: 12px;
+    }
+    .topbar .brand {
+      font-family: var(--font-serif);
+      font-size: 18px;
+      font-weight: bold;
+      color: #fff;
+      text-decoration: none;
+      letter-spacing: 0.04em;
+    }
+    .topbar .brand:hover { color: var(--accent-gold); }
+    .counter {
+      font-size: 14px;
+      color: rgba(255,255,255,0.7);
+      letter-spacing: 1px;
+      white-space: nowrap;
+    }
+    .counter strong { color: #7ec8f5; font-size: 20px; }
+    .back-btn, .fullscreen-btn {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.8);
+      padding: 5px 14px;
+      border-radius: 20px;
+      text-decoration: none;
+      font-size: 12px;
+      transition: 0.2s;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .back-btn:hover, .fullscreen-btn:hover {
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      border-color: rgba(255,255,255,0.3);
+    }
+
+    /* 主轮播区 */
+    .carousel-area {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      cursor: pointer;
+      background: #0a0e14;
+    }
+
+    /* 图片切换 - 加入缩放翻页效果 */
+    .map-img-wrap {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: scale(0.96);
+      transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      pointer-events: none;
+    }
+    .map-img-wrap.active {
+      opacity: 1;
+      transform: scale(1);
+      pointer-events: auto;
+    }
+    .map-img-wrap img {
+      max-width: 95%;
+      max-height: 92%;
+      object-fit: contain;
+      border-radius: 4px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+    }
+
+    /* 左右切换按钮 */
+    .nav-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 56px; height: 56px;
+      background: rgba(0,0,0,0.5);
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; z-index: 10; transition: 0.2s;
+      font-size: 24px; color: rgba(255,255,255,0.8);
+    }
+    .nav-arrow:hover {
+      background: rgba(22,94,148,0.8);
+      border-color: #7ec8f5;
+      color: #fff;
+    }
+    .nav-arrow.disabled { opacity: 0.2; cursor: default; }
+    .nav-prev { left: 20px; }
+    .nav-next { right: 20px; }
+
+    /* 底部信息栏 */
+    .bottom-bar {
+      padding: 12px 24px 8px;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      flex-shrink: 0;
+    }
+    .map-title {
+      font-family: var(--font-serif);
+      font-size: 15px;
+      color: #fff;
+      text-align: center;
+      margin-bottom: 6px;
+      letter-spacing: 0.5px;
+    }
+    .progress-bar-wrap {
+      height: 3px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 4px;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--brand-primary), var(--accent-gold));
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+    .hint {
+      text-align: center;
+      font-size: 10px;
+      color: rgba(255,255,255,0.3);
+    }
+
+    /* 缩略图条 */
+    .thumb-strip {
+      padding: 8px 24px 10px;
+      background: rgba(0,0,0,0.85);
+      flex-shrink: 0;
+      overflow-x: auto;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .thumb-strip::-webkit-scrollbar { height: 4px; }
+    .thumb-strip::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 2px; }
+    .thumb-strip::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+    .thumb {
+      flex-shrink: 0;
+      width: 64px; height: 44px;
+      object-fit: cover;
+      border-radius: 4px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: 0.2s;
+      opacity: 0.45;
+    }
+    .thumb:hover { opacity: 0.85; transform: scale(1.05); }
+    .thumb.current {
+      border-color: var(--accent-gold);
+      opacity: 1;
+      box-shadow: 0 0 8px rgba(184,134,11,0.4);
+    }
+
+    /* 加载状态 */
+    .loading-overlay {
+      position: fixed; inset: 0;
+      background: #0a0e14;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      z-index: 999;
+    }
+    .loading-spinner {
+      width: 48px; height: 48px;
+      border: 4px solid rgba(126,200,245,0.2);
+      border-top-color: var(--accent-gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text { color: rgba(255,255,255,0.5); font-size: 14px; }
+
+    /* 文件夹切换 */
+    .folder-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+    .folder-tab {
+      padding: 4px 14px;
+      border-radius: 12px;
+      font-size: 12px;
+      cursor: pointer;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.55);
+      transition: 0.2s;
+    }
+    .folder-tab:hover { background: rgba(255,255,255,0.12); color: #fff; }
+    .folder-tab.active {
+      background: rgba(22,94,148,0.6);
+      border-color: var(--accent-gold);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+<!-- 加载遮罩 -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text" id="loadingText">正在加载地图数据...</div>
+</div>
+
+<!-- 顶部导航 -->
+<div class="topbar">
+  <a class="brand" href="index.html">📜 数智方志</a>
+  <div class="folder-tabs" id="folderTabs"></div>
+  <div class="counter">
+    <strong id="curIdx">1</strong> / <span id="totalCnt">0</span>
+  </div>
+  <button class="fullscreen-btn" onclick="toggleFullscreen()" title="沉浸浏览">⛶ 全屏</button>
+  <a class="back-btn" href="index.html#resources">← 返回</a>
+</div>
+
+<!-- 主轮播区 -->
+<div class="carousel-area" id="carouselArea">
+  <div class="map-img-wrap active" id="mapWrap0"></div>
+  <div class="map-img-wrap" id="mapWrap1"></div>
+  <div class="nav-arrow nav-prev" id="btnPrev" onclick="event.stopPropagation(); prev()">‹</div>
+  <div class="nav-arrow nav-next" id="btnNext" onclick="event.stopPropagation(); next()">›</div>
+</div>
+
+<!-- 底部信息 -->
+<div class="bottom-bar">
+  <div class="map-title" id="mapTitle">—</div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+  </div>
+  <div class="hint">← → 方向键 | 点击左右区域 | Home/End 首尾 | F 全屏</div>
+</div>
+
+<!-- 缩略图条 -->
+<div class="thumb-strip" id="thumbStrip"></div>
+
+<script>
+const DATA_URL = 'maps_data.json';
+let allMaps = [];
+let currentFolder = '';
+let current = 0;
+let wraps = [document.getElementById('mapWrap0'), document.getElementById('mapWrap1')];
+
+async function loadData() {
+  try {
+    const res = await fetch(DATA_URL);
+    if (!res.ok) throw new Error('加载失败');
+    allMaps = await res.json();
+    document.getElementById('loadingText').textContent = '正在渲染...';
+    const folders = [...new Set(allMaps.map(m => m.folder))];
+    renderFolderTabs(folders);
+    if (folders.length > 0) switchFolder(folders[0]);
+  } catch (e) {
+    document.getElementById('loadingText').textContent = '地图数据加载失败：' + e.message;
+  }
+}
+
+function renderFolderTabs(folders) {
+  const container = document.getElementById('folderTabs');
+  container.innerHTML = '';
+  folders.forEach(f => {
+    const btn = document.createElement('div');
+    btn.className = 'folder-tab';
+    btn.textContent = f;
+    btn.onclick = () => switchFolder(f);
+    container.appendChild(btn);
+  });
+}
+
+function switchFolder(folder) {
+  currentFolder = folder; current = 0;
+  document.querySelectorAll('.folder-tab').forEach(t => {
+    t.classList.toggle('active', t.textContent === folder);
+  });
+  const filtered = getFiltered();
+  renderThumbs(filtered);
+  document.getElementById('loadingOverlay').style.opacity = '0';
+  setTimeout(() => { document.getElementById('loadingOverlay').style.display = 'none'; }, 400);
+  updateDisplay();
+}
+
+function getFiltered() {
+  if (!currentFolder) return allMaps;
+  return allMaps.filter(m => m.folder === currentFolder);
+}
+
+function updateDisplay() {
+  const filtered = getFiltered();
+  const total = filtered.length;
+  if (total === 0) return;
+  const item = filtered[current];
+  if (!item) return;
+  document.getElementById('curIdx').textContent = current + 1;
+  document.getElementById('totalCnt').textContent = total;
+  document.getElementById('progressFill').style.width = ((current + 1) / total * 100) + '%';
+  document.getElementById('mapTitle').textContent = `[${item.folder}] ${item.title}`;
+
+  const nextWrap = wraps.filter(w => !w.classList.contains('active'))[0];
+  nextWrap.innerHTML = `<img src="${item.file}" alt="${item.title}" onload="imgLoaded(this)" onerror="imgError(this)">`;
+  wraps.forEach(w => w.classList.remove('active'));
+  nextWrap.classList.add('active');
+
+  document.querySelectorAll('.thumb').forEach((t, i) => {
+    t.classList.toggle('current', i === current);
+  });
+  const thumb = document.querySelectorAll('.thumb')[current];
+  if (thumb) thumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+
+  document.getElementById('btnPrev').classList.toggle('disabled', current === 0);
+  document.getElementById('btnNext').classList.toggle('disabled', current === total - 1);
+  preloadAdjacent(filtered);
+}
+
+function imgLoaded(img) {
+  img.style.opacity = '0';
+  img.style.transition = 'opacity 0.3s';
+  requestAnimationFrame(() => { img.style.opacity = '1'; });
+}
+function imgError(img) {
+  img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23111" width="400" height="300"/%3E%3Ctext x="200" y="150" text-anchor="middle" fill="%23666" font-size="14"%3E图片加载失败%3C/text%3E%3C/svg%3E';
+}
+
+function preloadAdjacent(filtered) {
+  [current - 1, current + 1].forEach(idx => {
+    if (idx < 0 || idx >= filtered.length) return;
+    const img = new Image();
+    img.src = filtered[idx].file;
+  });
+}
+
+// 懒加载相关
+let thumbObserver = null;
+
+function initThumbObserver() {
+  if (thumbObserver) thumbObserver.disconnect();
+  if ('IntersectionObserver' in window) {
+    thumbObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const img = entry.target;
+          const dataSrc = img.getAttribute('data-src');
+          if (dataSrc) {
+            img.src = dataSrc;
+            img.removeAttribute('data-src');
+            thumbObserver.unobserve(img);
+          }
+        }
+      });
+    }, { root: document.getElementById('thumbStrip'), rootMargin: '50px' });
+  }
+}
+
+function renderThumbs(filtered) {
+  const strip = document.getElementById('thumbStrip');
+  strip.innerHTML = '';
+  initThumbObserver();
+  
+  filtered.forEach((item, i) => {
+    const img = document.createElement('img');
+    img.className = 'thumb' + (i === 0 ? ' current' : '');
+    img.alt = item.title;
+    img.title = item.title;
+    img.loading = 'lazy';
+    
+    // 第一张立即加载，其余懒加载
+    if (i === 0) {
+      img.src = item.file;
+    } else {
+      img.setAttribute('data-src', item.file);
+      // 占位图
+      img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="64" height="44"%3E%3Crect fill="%231a1a1a" width="64" height="44"/%3E%3C/svg%3E';
+    }
+    
+    img.onclick = (e) => { e.stopPropagation(); jump(i); };
+    strip.appendChild(img);
+    
+    // 观察懒加载图片
+    if (thumbObserver && i !== 0) {
+      thumbObserver.observe(img);
+    }
+  });
+}
+
+function prev() { const f = getFiltered(); if (current > 0) { current--; updateDisplay(); } }
+function next() { const f = getFiltered(); if (current < f.length - 1) { current++; updateDisplay(); } }
+function jump(idx) { const f = getFiltered(); if (idx >= 0 && idx < f.length) { current = idx; updateDisplay(); } }
+
+// 全屏
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(() => {});
+  } else {
+    document.exitFullscreen();
+  }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); next(); }
+  if (e.key === 'Home') { current = 0; updateDisplay(); }
+  if (e.key === 'End') { current = getFiltered().length - 1; updateDisplay(); }
+  if (e.key === 'f' || e.key === 'F') { toggleFullscreen(); }
+});
+
+document.getElementById('carouselArea').addEventListener('click', e => {
+  const rect = e.currentTarget.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const w = rect.width;
+  if (x < w * 0.35) prev();
+  else if (x > w * 0.65) next();
+});
+
+loadData();
+</script>
+</body>
+</html>

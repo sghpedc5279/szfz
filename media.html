@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多媒体资源 - 数智方志</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="brand.css" rel="stylesheet">
+    <style>
+        html { scroll-behavior: smooth; }
+        .section { padding: 80px 0; }
+        .page-title { font-family: var(--font-serif); font-size: 2rem; font-weight: 700; margin-bottom: 40px; color: var(--brand-primary); text-align: center; position: relative; }
+        .page-title::after { content:''; position:absolute; bottom:-8px; left:50%; transform:translateX(-50%); width:60px; height:3px; background:linear-gradient(90deg,var(--accent-gold),var(--accent-red)); border-radius:2px; }
+
+        /* 视频播放器外框 */
+        .video-outer {
+            background: linear-gradient(180deg, #1a1a1a, #0d0d0d);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: var(--shadow-lg);
+        }
+        .video-title-bar {
+            padding: 14px 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            display: flex; align-items: center; gap: 10px;
+        }
+        .video-title-bar .dot { width:10px; height:10px; border-radius:50%; }
+        .video-title-bar .dot.red { background: #C44233; }
+        .video-title-bar .dot.yellow { background: #B8860B; }
+        .video-title-bar .dot.green { background: #5B8C5A; }
+        .video-title-bar span {
+            font-family: var(--font-serif);
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.8);
+            margin-left: 8px;
+        }
+        .video-container {
+            position: relative;
+            background: #000;
+            aspect-ratio: 16 / 9;
+        }
+        .video-container video { width: 100%; height: 100%; display: block; }
+
+        .video-info {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            margin-top: 24px;
+            border: 1px solid var(--border-light);
+        }
+        .video-info h5 { font-family: var(--font-serif); color: var(--brand-primary); margin-bottom: 15px; }
+        .video-info .meta { display: flex; gap: 24px; flex-wrap: wrap; color: var(--text-secondary); font-size: 14px; }
+
+        .custom-controls {
+            background: rgba(13,13,13,0.95);
+            padding: 12px 20px;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .custom-controls button {
+            background: none; border: none; color: rgba(255,255,255,0.75);
+            font-size: 18px; cursor: pointer; padding: 4px 8px;
+            border-radius: 6px; transition: background 0.2s;
+        }
+        .custom-controls button:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .progress-bar-custom {
+            flex: 1; height: 5px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 3px; cursor: pointer; position: relative;
+        }
+        .progress-bar-custom .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--brand-primary), var(--accent-gold));
+            border-radius: 3px; width: 0%; transition: width 0.1s;
+        }
+        .time-display { color: rgba(255,255,255,0.7); font-size: 12px; min-width: 100px; text-align: center; }
+        .volume-control { display: flex; align-items: center; gap: 4px; }
+        .volume-control input { width: 80px; accent-color: var(--accent-gold); }
+        .fullscreen-btn { margin-left: auto; }
+    </style>
+</head>
+<body>
+
+<!-- 导航栏 -->
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top brand-navbar">
+    <div class="container">
+        <a class="navbar-brand" href="index.html">📜 数智方志</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="index.html">返回首页</a></li>
+                <li class="nav-item"><a class="nav-link" href="texts.html">文本数据集</a></li>
+                <li class="nav-item"><a class="nav-link" href="maps.html">历史地图</a></li>
+                <li class="nav-item"><a class="nav-link active" href="media.html">多媒体资源</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- 主内容区 -->
+<section class="section" style="padding-top: 100px;">
+    <div class="container">
+        <h2 class="page-title">多媒体资源</h2>
+
+        <!-- 视频播放器（深色风格化外壳） -->
+        <div class="video-outer">
+            <div class="video-title-bar">
+                <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+                <span>🎬 苏州影像志 第五集 姑苏繁华</span>
+            </div>
+            <div class="video-container" id="videoContainer">
+                <video id="mainVideo" preload="metadata">
+                    <source id="videoSource" type="video/mp4">
+                    您的浏览器不支持视频播放
+                </video>
+                <div class="custom-controls" id="customControls">
+                    <button id="playPauseBtn" onclick="togglePlay()" title="播放/暂停">▶</button>
+                    <button onclick="skip(-10)" title="后退10秒">⏪</button>
+                    <button onclick="skip(10)" title="前进10秒">⏩</button>
+                    <div class="progress-bar-custom" id="progressBar" onclick="seek(event)">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="time-display" id="timeDisplay">00:00 / 00:00</div>
+                    <div class="volume-control">
+                        <span style="color:rgba(255,255,255,0.5);">🔊</span>
+                        <input type="range" min="0" max="1" step="0.1" value="1" id="volumeSlider" oninput="setVolume(this.value)">
+                    </div>
+                    <button class="fullscreen-btn" onclick="toggleFullscreen()" title="全屏">⛶</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 视频信息 -->
+        <div class="video-info">
+            <h5>📹 苏州影像志 第五集 姑苏繁华</h5>
+            <div class="meta mb-3">
+                <span>📁 格式：MP4</span>
+                <span>📐 分辨率：1920×1080 (Full HD)</span>
+                <span>🎬 类型：地方志影像纪录片</span>
+                <span>🏛️ 来源：苏州影像志系列</span>
+            </div>
+            <hr style="border-color:var(--border-warm);">
+            <p class="text-muted mb-0" style="font-size:14px;">
+                本视频收录于苏州影像志系列，以影像方式记录苏州的历史文化、城市变迁与发展成就。适合用于数字人文研究、地方志教学与文化传播等场景。
+            </p>
+        </div>
+
+        <!-- 说明 -->
+        <div class="card-content mt-4">
+            <h6 style="font-family:var(--font-serif);color:var(--brand-primary);">📋 多媒体资源说明</h6>
+            <ul class="mb-0 mt-2" style="font-size:0.9rem;color:var(--text-secondary);">
+                <li>本平台收录各类与方志研究相关的多媒体资源</li>
+                <li>支持在线播放，可使用控制栏或键盘快捷键（空格 播放/暂停，← → 快退/快进）</li>
+                <li>如需获取更高清版本或更多资源，请联系平台管理员</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<footer class="brand-footer">
+    <div class="container text-center">
+        <h5 style="font-family:var(--font-serif);color:rgba(255,255,255,0.9);">📜 数智方志 · 数字人文研究平台</h5>
+        <p class="mt-3">© 2026 版权所有 | 机构学术专用</p>
+    </div>
+</footer>
+
+<script>
+const video = document.getElementById('mainVideo');
+const videoSource = document.getElementById('videoSource');
+const playPauseBtn = document.getElementById('playPauseBtn');
+const progressBar = document.getElementById('progressBar');
+const progressFill = document.getElementById('progressFill');
+const timeDisplay = document.getElementById('timeDisplay');
+const videoContainer = document.getElementById('videoContainer');
+
+const videoFilename = '苏州影像志 第五集 姑苏繁华.mp4';
+videoSource.src = './' + encodeURIComponent(videoFilename);
+video.load();
+
+function formatTime(s) {
+    const mins = Math.floor(s / 60);
+    const secs = Math.floor(s % 60);
+    return `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+}
+function togglePlay() {
+    if (video.paused) { video.play(); playPauseBtn.textContent = '⏸'; }
+    else { video.pause(); playPauseBtn.textContent = '▶'; }
+}
+function skip(s) { video.currentTime = Math.max(0, Math.min(video.duration, video.currentTime + s)); }
+function setVolume(v) { video.volume = v; }
+function seek(e) {
+    const rect = progressBar.getBoundingClientRect();
+    video.currentTime = ((e.clientX - rect.left) / rect.width) * video.duration;
+}
+function toggleFullscreen() {
+    if (!document.fullscreenElement) videoContainer.requestFullscreen().catch(() => videoContainer.webkitRequestFullscreen());
+    else document.exitFullscreen();
+}
+video.addEventListener('timeupdate', () => {
+    const pct = (video.currentTime / video.duration) * 100;
+    progressFill.style.width = pct + '%';
+    timeDisplay.textContent = formatTime(video.currentTime) + ' / ' + formatTime(video.duration);
+});
+video.addEventListener('loadedmetadata', () => { timeDisplay.textContent = '00:00 / ' + formatTime(video.duration); });
+video.addEventListener('ended', () => { playPauseBtn.textContent = '▶'; });
+document.addEventListener('keydown', e => {
+    if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+    else if (e.code === 'ArrowLeft') skip(-5);
+    else if (e.code === 'ArrowRight') skip(5);
+    else if (e.code === 'ArrowUp') { setVolume(Math.min(1, video.volume + 0.1)); document.getElementById('volumeSlider').value = video.volume; }
+    else if (e.code === 'ArrowDown') { setVolume(Math.max(0, video.volume - 0.1)); document.getElementById('volumeSlider').value = video.volume; }
+    else if (e.code === 'KeyF') toggleFullscreen();
+});
+</script>
+</body>
+</html>
